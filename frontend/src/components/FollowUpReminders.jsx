@@ -11,47 +11,37 @@ function FollowUpReminders({ onReminderDone }) {
     fetchFollowUps();
   }, []);
 
-  const fetchFollowUps = async () => {
-    try {
-      const res = await api.get("/applications");
+ const fetchFollowUps = async () => {
+  try {
+    const res = await api.get("/applications");
 
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+    const dueApplications = res.data.applications.filter((app) => {
+      if (!app.followUpDate) return false;
 
-      const dueApplications = res.data.applications.filter((app) => {
-        if (!app.followUpDate) return false;
+      return (
+        app.status !== "Offer" &&
+        app.status !== "Rejected"
+      );
+    });
 
-        const followUpDate = new Date(app.followUpDate);
-        followUpDate.setHours(0, 0, 0, 0);
+    // Sort by follow-up date ascending (soonest first)
+    dueApplications.sort(
+      (a, b) => new Date(a.followUpDate) - new Date(b.followUpDate)
+    );
 
-        return (
-          followUpDate <= today &&
-          app.status !== "Offer" &&
-          app.status !== "Rejected"
-        );
-      });
-
-      setFollowUps(dueApplications);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+    setFollowUps(dueApplications);
+  } catch (error) {
+    console.log(error);
+  } finally {
+    setLoading(false);
+  }
+};
   const handleMarkDone = async (id) => {
     try {
       setUpdatingId(id);
-
-      await api.put(`/applications/${id}`, {
-        followUpDate: null,
-      });
-
+      await api.put(`/applications/${id}`, { followUpDate: null });
       setFollowUps((prev) => prev.filter((app) => app._id !== id));
-
-      if (onReminderDone) {
-        onReminderDone();
-      }
+      if (onReminderDone) onReminderDone();
     } catch (error) {
       console.log(error);
       alert("Something went wrong");
@@ -60,68 +50,60 @@ function FollowUpReminders({ onReminderDone }) {
     }
   };
 
-  // Important part:
-  // If there is no follow-up due, hide the whole section
-  if (loading) return null;
-  if (followUps.length === 0) return null;
+  if (loading) return (
+    <div className="flex items-center justify-center py-8">
+      <p className="text-sm text-slate-400">Loading…</p>
+    </div>
+  );
+
+  if (followUps.length === 0) return (
+    <div className="flex flex-col items-center justify-center py-8 text-center">
+      <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center mb-3">
+        <span className="text-lg">🔔</span>
+      </div>
+      <p className="text-sm font-medium text-slate-500">No reminders</p>
+      <p className="text-xs text-slate-400 mt-1">You're all caught up!</p>
+    </div>
+  );
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm mt-8">
-      <div className="flex items-center justify-between mb-5">
-        <div>
-          <h2 className="text-xl font-bold text-slate-900">
-            Follow-up Reminders
-          </h2>
-          <p className="text-sm text-slate-500">
-            Applications that need your attention today.
-          </p>
-        </div>
-
-        <Link
-          to="/applications"
-          className="text-sm font-semibold text-blue-600 hover:underline"
-        >
+    <div className="space-y-3">
+      <div className="flex items-center justify-between mb-1">
+        <p className="text-xs text-slate-400">
+          {followUps.length} application{followUps.length > 1 ? "s" : ""} need attention
+        </p>
+        <Link to="/applications" className="text-xs font-medium text-blue-600 hover:underline">
           View all
         </Link>
       </div>
 
-      <div className="space-y-4">
-        {followUps.slice(0, 5).map((app) => (
-          <div
-            key={app._id}
-            className="flex items-center justify-between gap-4 bg-slate-50 border border-slate-200 rounded-2xl p-4 hover:bg-slate-100 transition"
-          >
-            <div>
-              <h3 className="font-bold text-slate-900">
-                {app.company}
-              </h3>
-
-              <p className="text-sm text-slate-500">
-                {app.role}
-              </p>
-
-              <p className="text-xs text-red-500 mt-1 font-medium">
-                Follow-up due:{" "}
-                {new Date(app.followUpDate).toLocaleDateString()}
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-sm font-semibold">
-                {app.status}
-              </span>
-
-              <button
-                onClick={() => handleMarkDone(app._id)}
-                disabled={updatingId === app._id}
-                className="px-4 py-2 rounded-xl bg-green-600 text-white text-sm font-semibold hover:bg-green-700 disabled:opacity-60 transition"
-              >
-                {updatingId === app._id ? "Updating..." : "Mark Done"}
-              </button>
-            </div>
+      {followUps.slice(0, 5).map((app) => (
+        <div
+          key={app._id}
+          className="flex items-center justify-between gap-4 bg-slate-50 border border-slate-200 rounded-xl p-3.5 hover:bg-slate-100 transition"
+        >
+          <div>
+            <p className="text-sm font-medium text-slate-800">{app.company}</p>
+            <p className="text-xs text-slate-400">{app.role}</p>
+            <p className="text-xs text-red-400 mt-0.5">
+              Due: {new Date(app.followUpDate).toLocaleDateString()}
+            </p>
           </div>
-        ))}
-      </div>
+
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <span className="px-2.5 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-medium">
+              {app.status}
+            </span>
+            <button
+              onClick={() => handleMarkDone(app._id)}
+              disabled={updatingId === app._id}
+              className="px-3 py-1.5 rounded-lg bg-green-600 text-white text-xs font-medium hover:bg-green-700 disabled:opacity-60 transition"
+            >
+              {updatingId === app._id ? "Updating…" : "Mark done"}
+            </button>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

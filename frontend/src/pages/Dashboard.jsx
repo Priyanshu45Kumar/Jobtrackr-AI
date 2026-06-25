@@ -6,6 +6,7 @@ import StatsCard from "../components/StatsCard";
 import { useAuth } from "../context/AuthContext";
 import DashboardCharts from "../components/DashboardCharts";
 import FollowUpReminders from "../components/FollowUpReminders";
+import RecentApplications from "../components/RecentApplications";
 
 function Dashboard() {
   const { user } = useAuth();
@@ -72,6 +73,7 @@ function Dashboard() {
     }))
   }
 />
+    <RecentApplications />
       </main>
     </div>
   );

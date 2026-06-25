@@ -10,6 +10,7 @@ import VerifyOtp from "./pages/VerifyOtp";
 import ForgotPassword from "./pages/ForgotPassword";
 import VerifyResetOtp from "./pages/VerifyResetOtp";
 import ResetPassword from "./pages/ResetPassword";
+import ResumeAnalyzer from "./pages/ResumeAnalyzer";
 
 function App() {
   return (
@@ -36,6 +37,14 @@ function App() {
   element={
     <ProtectedRoute>
       <ColdEmail />
+    </ProtectedRoute>
+  }
+/>
+ <Route
+  path="/resume-analyzer"
+  element={
+    <ProtectedRoute>
+      <ResumeAnalyzer />
     </ProtectedRoute>
   }
 />

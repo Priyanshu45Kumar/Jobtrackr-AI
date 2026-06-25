@@ -8,6 +8,8 @@ function Login() {
     email: "",
     password: "",
   });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const { setUser } = useAuth();
   const navigate = useNavigate();
@@ -20,19 +22,25 @@ function Login() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      const res = await api.post("/auth/login", formData);
+  try {
+    setLoading(true);
+    setError("");
 
-      setUser(res.data.user);
-      navigate("/");
-    } catch (error) {
-      console.log(error.response?.data);
-      alert(error.response?.data?.message);
-    }
-  };
+    const res = await api.post("/auth/login", formData);
 
+    setUser(res.data.user);
+    navigate("/");
+  } catch (error) {
+    setError(
+      error.response?.data?.message ||
+        "Login failed. Please check your credentials."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center px-6">
       <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-purple-600/10 to-cyan-500/20"></div>
@@ -95,8 +103,14 @@ function Login() {
               className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
 
+            {error && (
+  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+    {error}
+  </div>
+)}
+
             <button className="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition shadow-lg shadow-blue-500/30">
-              Login
+              {loading ? "Signing in..." : "Sign In"}
             </button>
           </form>
 

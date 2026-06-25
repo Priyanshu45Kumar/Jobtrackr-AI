@@ -5,6 +5,10 @@ import { useAuth } from "../context/AuthContext";
 
 function Signup() {
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
   const { setUser } = useAuth();
   const navigate = useNavigate();
 
@@ -12,12 +16,34 @@ function Signup() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    setLoading(true);
+    setError("");
+    setSuccess("");
+
     const res = await api.post("/auth/signup", formData);
-    setUser(res.data.user);
-    navigate("/");
-  };
+
+    localStorage.setItem("verifyEmail", res.data.email);
+
+    setSuccess(res.data.message);
+
+    navigate("/verify-otp", {
+      state: {
+        email: res.data.email,
+      },
+    });
+  } catch (error) {
+    setError(
+      error.response?.data?.message ||
+        "Signup failed. Please try again."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center px-6">
@@ -78,8 +104,20 @@ function Signup() {
               className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
 
+            {error && (
+  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+    {error}
+  </div>
+)}
+
+{success && (
+  <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl text-sm">
+    {success}
+  </div>
+)}
+
             <button className="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition shadow-lg shadow-blue-500/30">
-              Create Account
+              {loading ? "Creating account..." : "Create Account"}
             </button>
           </form>
 

@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Applications from "./pages/Applications";
 import ColdEmail from "./pages/ColdEmail";
+import VerifyOtp from "./pages/VerifyOtp";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
 
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/verify-otp" element={<VerifyOtp />} />
       </Routes>
     </BrowserRouter>
   );

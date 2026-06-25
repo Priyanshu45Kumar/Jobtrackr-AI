@@ -5,6 +5,7 @@ import Sidebar from "../components/Sidebar";
 import StatsCard from "../components/StatsCard";
 import { useAuth } from "../context/AuthContext";
 import DashboardCharts from "../components/DashboardCharts";
+import FollowUpReminders from "../components/FollowUpReminders";
 
 function Dashboard() {
   const { user } = useAuth();
@@ -63,6 +64,7 @@ function Dashboard() {
           <StatsCard title="Follow-ups Due" value={stats?.followUpsDue || 0} icon="⏰" />
         </div>
         {stats && <DashboardCharts stats={stats} />}
+        <FollowUpReminders />
       </main>
     </div>
   );

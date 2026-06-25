@@ -7,6 +7,7 @@ const applicationRoutes = require("./routes/applicationRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const aiRoutes = require("./routes/aiRoutes");
 const resumeRoutes = require("./routes/resumeRoutes");
+const interviewRoutes = require("./routes/interviewRoutes");
 dotenv.config();
 const connectDB = require("./config/db");
 connectDB();
@@ -27,6 +28,8 @@ app.use("/api/applications",applicationRoutes );
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/resume", resumeRoutes);
+app.use("/api/interview", interviewRoutes);
+
 
 app.get("/", (req, res) => {
   res.send("JobTrackr AI Backend is running");

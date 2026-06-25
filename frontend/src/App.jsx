@@ -11,6 +11,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import VerifyResetOtp from "./pages/VerifyResetOtp";
 import ResetPassword from "./pages/ResetPassword";
 import ResumeAnalyzer from "./pages/ResumeAnalyzer";
+import InterviewAssistant from "./pages/InterviewAssistant";
 
 function App() {
   return (
@@ -45,6 +46,14 @@ function App() {
   element={
     <ProtectedRoute>
       <ResumeAnalyzer />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/interview-assistant"
+  element={
+    <ProtectedRoute>
+      <InterviewAssistant />
     </ProtectedRoute>
   }
 />

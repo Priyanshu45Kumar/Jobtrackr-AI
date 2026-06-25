@@ -5,6 +5,7 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Applications from "./pages/Applications";
+import ColdEmail from "./pages/ColdEmail";
 
 function App() {
   return (
@@ -23,6 +24,14 @@ function App() {
   element={
     <ProtectedRoute>
       <Applications />
+    </ProtectedRoute>
+  }
+/>
+    <Route
+  path="/cold-email"
+  element={
+    <ProtectedRoute>
+      <ColdEmail />
     </ProtectedRoute>
   }
 />

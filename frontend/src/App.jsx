@@ -7,6 +7,9 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Applications from "./pages/Applications";
 import ColdEmail from "./pages/ColdEmail";
 import VerifyOtp from "./pages/VerifyOtp";
+import ForgotPassword from "./pages/ForgotPassword";
+import VerifyResetOtp from "./pages/VerifyResetOtp";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   return (
@@ -40,6 +43,9 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/verify-reset-otp" element={<VerifyResetOtp />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </BrowserRouter>
   );

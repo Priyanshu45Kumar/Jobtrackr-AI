@@ -43,6 +43,21 @@ const userSchema = new mongoose.Schema(
     emailOtpExpires: {
       type: Date,
     },
+    passwordResetOtp: {
+  type: String,
+},
+
+passwordResetOtpExpires: {
+  type: Date,
+},
+
+passwordResetToken: {
+  type: String,
+},
+
+passwordResetTokenExpires: {
+  type: Date,
+},
   },
   {
     timestamps: true,

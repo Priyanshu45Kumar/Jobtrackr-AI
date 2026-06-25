@@ -4,6 +4,7 @@ import api from "../api/axios";
 import Sidebar from "../components/Sidebar";
 import StatsCard from "../components/StatsCard";
 import { useAuth } from "../context/AuthContext";
+import DashboardCharts from "../components/DashboardCharts";
 
 function Dashboard() {
   const { user } = useAuth();
@@ -61,6 +62,7 @@ function Dashboard() {
           <StatsCard title="Rejected" value={stats?.rejected || 0} icon="❌" />
           <StatsCard title="Follow-ups Due" value={stats?.followUpsDue || 0} icon="⏰" />
         </div>
+        {stats && <DashboardCharts stats={stats} />}
       </main>
     </div>
   );

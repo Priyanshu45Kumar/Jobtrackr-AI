@@ -64,7 +64,14 @@ function Dashboard() {
           <StatsCard title="Follow-ups Due" value={stats?.followUpsDue || 0} icon="⏰" />
         </div>
         {stats && <DashboardCharts stats={stats} />}
-        <FollowUpReminders />
+        <FollowUpReminders
+  onReminderDone={() =>
+    setStats((prev) => ({
+      ...prev,
+      followUpsDue: Math.max((prev?.followUpsDue || 0) - 1, 0),
+    }))
+  }
+/>
       </main>
     </div>
   );

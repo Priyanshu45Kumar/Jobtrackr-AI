@@ -2,38 +2,60 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/axios";
 
-function FollowUpReminders() {
+function FollowUpReminders({ onReminderDone }) {
   const [followUps, setFollowUps] = useState([]);
+  const [updatingId, setUpdatingId] = useState(null);
 
   useEffect(() => {
-    const fetchFollowUps = async () => {
-      try {
-        const res = await api.get("/applications");
-
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        const dueApplications = res.data.applications.filter((app) => {
-          if (!app.followUpDate) return false;
-
-          const followUpDate = new Date(app.followUpDate);
-          followUpDate.setHours(0, 0, 0, 0);
-
-          return (
-            followUpDate <= today &&
-            app.status !== "Offer" &&
-            app.status !== "Rejected"
-          );
-        });
-
-        setFollowUps(dueApplications);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
     fetchFollowUps();
   }, []);
+
+  const fetchFollowUps = async () => {
+    try {
+      const res = await api.get("/applications");
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const dueApplications = res.data.applications.filter((app) => {
+        if (!app.followUpDate) return false;
+
+        const followUpDate = new Date(app.followUpDate);
+        followUpDate.setHours(0, 0, 0, 0);
+
+        return (
+          followUpDate <= today &&
+          app.status !== "Offer" &&
+          app.status !== "Rejected"
+        );
+      });
+
+      setFollowUps(dueApplications);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleMarkDone = async (id) => {
+    try {
+      setUpdatingId(id);
+
+      await api.put(`/applications/${id}`, {
+        followUpDate: null,
+      });
+
+      setFollowUps((prev) => prev.filter((app) => app._id !== id));
+
+      if (onReminderDone) {
+        onReminderDone();
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Something went wrong");
+    } finally {
+      setUpdatingId(null);
+    }
+  };
 
   return (
     <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm mt-8">
@@ -70,7 +92,7 @@ function FollowUpReminders() {
           {followUps.slice(0, 5).map((app) => (
             <div
               key={app._id}
-              className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-2xl p-4 hover:bg-slate-100 transition"
+              className="flex items-center justify-between gap-4 bg-slate-50 border border-slate-200 rounded-2xl p-4 hover:bg-slate-100 transition"
             >
               <div>
                 <h3 className="font-bold text-slate-900">
@@ -87,9 +109,19 @@ function FollowUpReminders() {
                 </p>
               </div>
 
-              <span className="px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-sm font-semibold">
-                {app.status}
-              </span>
+              <div className="flex items-center gap-3">
+                <span className="px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-sm font-semibold">
+                  {app.status}
+                </span>
+
+                <button
+                  onClick={() => handleMarkDone(app._id)}
+                  disabled={updatingId === app._id}
+                  className="px-4 py-2 rounded-xl bg-green-600 text-white text-sm font-semibold hover:bg-green-700 disabled:opacity-60 transition"
+                >
+                  {updatingId === app._id ? "Updating..." : "Mark Done"}
+                </button>
+              </div>
             </div>
           ))}
         </div>

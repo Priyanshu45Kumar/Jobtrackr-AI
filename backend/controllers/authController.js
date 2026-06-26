@@ -7,8 +7,8 @@ const crypto = require("crypto");
 const setAuthCookie = (res, token) => {
   res.cookie("token", token, {
     httpOnly: true,
-    secure: false,
-    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 };
@@ -432,6 +432,8 @@ const getMe = async (req, res) => {
 const logout = (req, res) => {
   res.cookie("token", "", {
     httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     expires: new Date(0),
   });
 

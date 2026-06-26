@@ -2,6 +2,11 @@
 
 JobTrackr AI is a full-stack MERN + AI career assistant platform that helps job seekers track job applications, manage follow-ups, analyze resumes, generate cold emails, and prepare for interviews using AI.
 
+## 🔗 Live Demo
+
+Frontend: https://jobtrackr-ai-pearl.vercel.app
+Backend: https://jobtrackr-ai-backend.onrender.com
+
 ---
 
 ## 🌟 Features
@@ -13,7 +18,8 @@ JobTrackr AI is a full-stack MERN + AI career assistant platform that helps job 
 * Forgot password with OTP
 * JWT authentication using HTTP-only cookies
 * Protected routes
-* User-friendly login/signup error messages
+* Production-ready cookie configuration
+* User-friendly login/signup error handling
 
 ### 📊 Dashboard
 
@@ -82,6 +88,12 @@ JobTrackr AI is a full-stack MERN + AI career assistant platform that helps job 
   * Key points
   * Final preparation tips
 
+### ✉️ Email OTP System
+
+* Signup OTP email
+* Forgot password OTP email
+* Transactional emails handled using Brevo API
+
 ---
 
 ## 🛠️ Tech Stack
@@ -108,9 +120,9 @@ JobTrackr AI is a full-stack MERN + AI career assistant platform that helps job 
 * Cookie Parser
 * CORS
 * Multer
-* Nodemailer
 * pdf-parse
 * Gemini AI API
+* Brevo API
 
 ### Database
 
@@ -121,6 +133,7 @@ JobTrackr AI is a full-stack MERN + AI career assistant platform that helps job 
 * Frontend: Vercel
 * Backend: Render
 * Database: MongoDB Atlas
+* Email Service: Brevo API
 
 ---
 
@@ -146,6 +159,7 @@ JobTrackr-AI/
 │   │   ├── pages/
 │   │   ├── App.jsx
 │   │   └── main.jsx
+│   ├── vercel.json
 │   └── package.json
 │
 └── README.md
@@ -178,10 +192,11 @@ PORT=5000
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 GEMINI_API_KEY=your_gemini_api_key
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASS=your_gmail_app_password
 FRONTEND_URL=http://localhost:5173
 NODE_ENV=development
+
+BREVO_API_KEY=your_brevo_api_key
+BREVO_SENDER_EMAIL=your_verified_sender_email
 ```
 
 Run backend:
@@ -231,16 +246,16 @@ http://localhost:5173
 
 ### Backend Environment Variables
 
-| Variable         | Description                       |
-| ---------------- | --------------------------------- |
-| `PORT`           | Backend server port               |
-| `MONGO_URI`      | MongoDB Atlas connection string   |
-| `JWT_SECRET`     | Secret key for JWT authentication |
-| `GEMINI_API_KEY` | Gemini API key for AI features    |
-| `EMAIL_USER`     | Gmail address used for OTP emails |
-| `EMAIL_PASS`     | Gmail app password                |
-| `FRONTEND_URL`   | Frontend URL for CORS             |
-| `NODE_ENV`       | Environment mode                  |
+| Variable             | Description                               |
+| -------------------- | ----------------------------------------- |
+| `PORT`               | Backend server port for local development |
+| `MONGO_URI`          | MongoDB Atlas connection string           |
+| `JWT_SECRET`         | Secret key for JWT authentication         |
+| `GEMINI_API_KEY`     | Gemini API key for AI features            |
+| `FRONTEND_URL`       | Frontend URL for CORS                     |
+| `NODE_ENV`           | Environment mode                          |
+| `BREVO_API_KEY`      | Brevo API key for transactional emails    |
+| `BREVO_SENDER_EMAIL` | Verified sender email in Brevo            |
 
 ### Frontend Environment Variables
 
@@ -305,6 +320,20 @@ All AI requests are handled through the backend to keep API keys secure.
 
 ---
 
+## ✉️ Email Service
+
+JobTrackr AI uses Brevo API for transactional emails.
+
+Email features include:
+
+* Signup OTP verification
+* Forgot password OTP
+* Password reset flow
+
+Brevo sender email must be verified before sending emails.
+
+---
+
 ## 🚀 Deployment
 
 ### Backend Deployment on Render
@@ -317,16 +346,22 @@ Build Command: npm install
 Start Command: npm start
 ```
 
-Add these environment variables on Render:
+Render environment variables:
 
 ```env
 NODE_ENV=production
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 GEMINI_API_KEY=your_gemini_api_key
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASS=your_gmail_app_password
-FRONTEND_URL=https://your-vercel-frontend-url.vercel.app
+FRONTEND_URL=https://jobtrackr-ai-pearl.vercel.app
+BREVO_API_KEY=your_brevo_api_key
+BREVO_SENDER_EMAIL=your_verified_sender_email
+```
+
+Backend live URL:
+
+```txt
+https://jobtrackr-ai-backend.onrender.com
 ```
 
 ---
@@ -342,10 +377,37 @@ Build Command: npm run build
 Output Directory: dist
 ```
 
-Add this environment variable on Vercel:
+Vercel environment variable:
 
 ```env
-VITE_API_URL=https://your-render-backend-url.onrender.com/api
+VITE_API_URL=https://jobtrackr-ai-backend.onrender.com/api
+```
+
+Frontend live URL:
+
+```txt
+https://jobtrackr-ai-pearl.vercel.app
+```
+
+---
+
+## 🔁 React Router Vercel Rewrite
+
+For React Router routes like `/login`, `/signup`, and `/dashboard`, add this file:
+
+```txt
+frontend/vercel.json
+```
+
+```json
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
 ```
 
 ---
@@ -374,20 +436,26 @@ Interview assistant
 
 ## 📸 Screenshots
 
-Add screenshots here after deployment:
+### Login Page
+![Login Page](assets/screenshots/login.png)
 
-```txt
-Dashboard Screenshot
-Applications Page Screenshot
-Kanban Board Screenshot
-Cold Email Generator Screenshot
-Resume Analyzer Screenshot
-Interview Assistant Screenshot
-Login / Signup Screenshot
-```
+### Dashboard
+![Dashboard](assets/screenshots/dashboard.png)
 
----
+### Applications Page
+![Applications Page](assets/screenshots/applications.png)
 
+### Kanban Board
+![Dashboard](assets/screenshots/dashboard2.png)
+
+### AI Cold Email Generator
+![Cold Email Generator](assets/screenshots/cold-email.png)
+
+### AI Resume Analyzer
+![Resume Analyzer](assets/screenshots/resume-analyzer.png)
+
+### AI Interview Assistant
+![Interview Assistant](assets/screenshots/interview-assistant.png)
 ## 📈 Future Improvements
 
 * Application timeline
@@ -399,6 +467,7 @@ Login / Signup Screenshot
 * AI career roadmap generator
 * Notification system
 * Dark mode
+* Custom domain for production email sending
 
 ---
 

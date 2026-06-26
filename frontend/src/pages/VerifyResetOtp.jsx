@@ -34,8 +34,7 @@ function VerifyResetOtp() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
-
+   <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4 pt-20">
       {/* Background blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-indigo-600/10 blur-3xl" />

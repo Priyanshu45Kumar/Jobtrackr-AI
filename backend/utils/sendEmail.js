@@ -1,28 +1,20 @@
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendEmail = async ({ to, subject, html }) => {
-  const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
-    family: 4, // Force IPv4
-
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-
-    connectionTimeout: 30000,
-    greetingTimeout: 30000,
-    socketTimeout: 30000,
-  });
-
-  await transporter.sendMail({
-    from: `"JobTrackr AI" <${process.env.EMAIL_USER}>`,
+  const { data, error } = await resend.emails.send({
+    from: "JobTrackr AI <onboarding@resend.dev>",
     to,
     subject,
     html,
   });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
 };
 
 module.exports = sendEmail;

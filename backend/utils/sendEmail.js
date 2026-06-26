@@ -1,17 +1,29 @@
-const { Resend } = require("resend");
-
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const sendEmail = async ({ to, subject, html }) => {
-  const { data, error } = await resend.emails.send({
-    from: "JobTrackr AI <onboarding@resend.dev>",
-    to,
-    subject,
-    html,
+  const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "api-key": process.env.BREVO_API_KEY,
+    },
+    body: JSON.stringify({
+      sender: {
+        name: "JobTrackr AI",
+        email: process.env.BREVO_SENDER_EMAIL,
+      },
+      to: [
+        {
+          email: to,
+        },
+      ],
+      subject,
+      htmlContent: html,
+    }),
   });
 
-  if (error) {
-    throw new Error(error.message);
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to send email");
   }
 
   return data;
